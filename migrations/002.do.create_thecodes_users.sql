@@ -1,8 +1,6 @@
-create extension if not exists "uuid-ossp";
-
 create table thecodes_users (
-  id uuid default uuid_generate_v4(),
-  user_name text not null,
+  id serial primary key,
+  user_name text not null unique,
   full_name text not null,
   password text not null,
   nickname text,
@@ -12,5 +10,5 @@ create table thecodes_users (
 
 alter table thecodes_codes
   add column
-    user_id uuid references thecodes_users(id)
+    user_id integer references thecodes_users(id)
     on delete set null;

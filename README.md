@@ -9,7 +9,7 @@ This is the backend server for the "The Codes" web app.
 - Create database user: `createuser thecodes`
 - Grant privileges to new user in `psql`:
   - `GRANT ALL PRIVILEGES ON DATABASE thecodes TO thecodes`
-  - `GRANT ALL PRIVILEGES ON DATABASE  thecodes-test" TO thecodes`
+  - `GRANT ALL PRIVILEGES ON DATABASE "thecodes-test" TO thecodes`
 - Prepare environment file: `cp example.env .env`
 - Replace values in `.env` with your custom values.
 - Bootstrap development database: `npm run migrate`
