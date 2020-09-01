@@ -8,23 +8,22 @@ const { NODE_ENV } = require('./config');
 // Router Imports
 const authRouter = require('./auth/auth-router');
 const usersRouter = require('./users/users-router');
+const codesRouter = require('./codes/codes-router');
+const adminRouter = require('./admin/admin-router');
 
 const app = express();
 
-const morganOption = (NODE_ENV === 'production') ? 'tiny' : 'common';
-
-app.use(morgan(morganOption, {skip: () => NODE_ENV === 'test'}));
+app.use(morgan((NODE_ENV === 'production') ? 'tiny' : 'common', {
+  skip: () => NODE_ENV === 'test',
+}));
 app.use(cors());
 app.use(helmet());
 
 // Use Routers
+app.use('/api/codes', codesRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
-
-// Replace or get rid of.
-app.get('/',  (req, res) => {
-  res.send('Hello, world!');
-});
+app.use('/api/admin', adminRouter);
 
 // Handle and display error messages.
 app.use(function errorHandler(error, req, res, next) {
