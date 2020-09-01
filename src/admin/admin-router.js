@@ -1,20 +1,37 @@
 const express = require('express');
 const AdminService = require('./admin-service');
-const {adminAuthCheck} = require('./admin-auth');
+const AdminAuth = require('./admin-auth');
 
 const adminRouter = express.Router();
 const parseBody = express.json();
 
 adminRouter
-  .route('/')
-  //.all(adminAuthCheck) //Enable one admin-auth.js is set up.
-  .get((req, res, next) => {
-    //Currently do nothing but return a success.
-    return res.status(200);
+  .post('/login', parseBody, (req, res, next) => {
+    const {user_name, password} = req.body;
+    const loginAdmin = {user_name, password};
+
+    for(const [key, value] of Object.entries(loginAdmin)) {
+      if (value == null) {
+        return res.status(400).json({
+          error: `Missing '${key}' in request body`
+        })
+      }
+    }
+    AdminAuth.getAdminWithUsername(loginAdmin.user_name)
+      .then(dbAdmin => {
+        if (!dbAdmin) {
+          return res.status(400).json({
+            error: 'Incorrect username or password'
+          });
+        }
+        return AdminAuth.comparePasswords(loginAdmin.password, dbAdmin.password)
+      })
+      .catch(next);
   });
 
 adminRouter
   .route('/users')
+  //.all(adminAuthCheck) //Enable one admin-auth.js is set up.
   .get((req, res, next) => {
     AdminService.getUserList(req.app.get('db'))
       .then(users => {
@@ -25,6 +42,7 @@ adminRouter
 
 adminRouter
   .route('/user/:user_id')
+  //.all(adminAuthCheck) //Enable one admin-auth.js is set up.
   .all(checkUserExists)
   .get((req, res) => {
     res.json(AdminService.serializeUser(res.user));

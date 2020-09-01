@@ -1,6 +1,5 @@
 const bcrypt = require('bcryptjs');
 const xss = require('xss');
-const AuthService = require('../auth/auth-service');
 
 const AdminService = {
   getUserList(db) {
