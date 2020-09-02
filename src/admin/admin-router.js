@@ -1,6 +1,7 @@
 const express = require('express');
 const AdminService = require('./admin-service');
 const AdminAuth = require('./admin-auth');
+const AuthService = require('../auth/auth-service');
 
 const adminRouter = express.Router();
 const parseBody = express.json();
@@ -17,7 +18,7 @@ adminRouter
         })
       }
     }
-    AdminAuth.getAdminWithUsername(loginAdmin.user_name)
+    AdminAuth.getAdminWithUsername(req.app.get('db'), loginAdmin.user_name)
       .then(dbAdmin => {
         if (!dbAdmin) {
           return res.status(400).json({
@@ -25,6 +26,18 @@ adminRouter
           });
         }
         return AdminAuth.comparePasswords(loginAdmin.password, dbAdmin.password)
+          .then(compare => {
+            if (!compare) {
+              return res.status(400).json({
+                error: 'Incorrect username or password'
+              });
+            }
+            const sub = dbAdmin.user_name;
+            const payload = {user_id: dbAdmin.id};
+            res.send({
+              authToken: AuthService.createJwt(sub, payload)
+            });
+          });
       })
       .catch(next);
   });
