@@ -44,18 +44,18 @@ adminRouter
 
 adminRouter
   .route('/users')
-  //.all(adminAuthCheck) //Enable one admin-auth.js is set up.
+  //.all(adminAuthCheck) //Enable when admin-auth.js is set up.
   .get((req, res, next) => {
     AdminService.getUserList(req.app.get('db'))
       .then(users => {
-        res.json(users.map(AdminService.serializeUsers));
+        res.json(users.map(AdminService.serializeUser));
       })
       .catch(next);
   });
 
 adminRouter
   .route('/user/:user_id')
-  //.all(adminAuthCheck) //Enable one admin-auth.js is set up.
+  //.all(adminAuthCheck) //Enable when admin-auth.js is set up.
   .all(checkUserExists)
   .get((req, res) => {
     res.json(AdminService.serializeUser(res.user));

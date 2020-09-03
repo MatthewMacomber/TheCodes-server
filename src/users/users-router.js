@@ -50,5 +50,19 @@ usersRouter
       .catch(next);
   });
 
+usersRouter
+  .get('/:user_id', (req, res, next) => {
+    const user_id = req.params.user_id;
+    UsersService.getUserName(req.app.get('db'), user_id)
+      .then(user => {
+        if (!user) {
+          return res.status(400).json({error: 'User not found'});
+        }
+        return res.status(200).json(user.user_name);
+      })
+      .catch(next);
+  });
+
+
 
 module.exports = usersRouter;

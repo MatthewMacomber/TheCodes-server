@@ -22,6 +22,16 @@ codesRouter
     res.json(CodeService.serializeCode(res.code));
   })
 
+codesRouter
+  .route('/user/:user_id')
+  .get((req, res, next) => {
+    CodeService.getUserCodes(req.app.get('db'), req.params.user_id)
+      .then(codes => {
+        res.json(codes.map(CodeService.serializeCode));
+      })
+      .catch(next)
+  })
+
 async function checkCodeExists(req, res, next) {
   try {
     const code = await CodeService.getById(

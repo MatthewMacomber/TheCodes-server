@@ -13,6 +13,11 @@ const CodeService = {
       .first();
   },
 
+  getUserCodes(db, id) {
+    return CodeService.getAllCodes(db)
+      .where('user_id', id);
+  },
+
   serializeCode(code) {
     return {
       id: code.id,
