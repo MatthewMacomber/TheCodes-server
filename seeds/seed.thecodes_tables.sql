@@ -17,7 +17,7 @@ values
 
 insert into thecodes_codes (title, user_id, user_name, content, answer)
 values
-  ('Super Code 1', 1, matt, 'jr;;p ept;f@', 'Hello World!'),
-  ('Super Code 2', 2, bob, 'jk, no codes here lol', 'No answer cause not real code :-P');
+  ('Super Code 1', 1, 'matt', 'jr;;p ept;f@', 'Hello World!'),
+  ('Super Code 2', 2, 'bob', 'jk, no codes here lol', 'No answer cause not real code :-P');
 
 commit;
