@@ -15,22 +15,25 @@ codesRouter
   })
 
 codesRouter
-  .route('/:code_id')
-  //.all(requireAuth)
-  .all(checkCodeExists)
-  .get((req, res) => {
-    res.json(CodeService.serializeCode(res.code));
-  })
-
-codesRouter
-  .route('/user/:user_id')
+  .route('/usercodes')
+  .all(requireAuth)
   .get((req, res, next) => {
-    CodeService.getUserCodes(req.app.get('db'), req.params.user_id)
+    CodeService.getUserCodes(req.app.get('db'), req.user.id)
       .then(codes => {
         res.json(codes.map(CodeService.serializeCode));
       })
       .catch(next)
   })
+
+codesRouter
+  .route('/:code_id')
+  .all(requireAuth)
+  .all(checkCodeExists)
+  .get((req, res) => {
+    res.json(CodeService.serializeCode(res.code));
+  })
+
+
 
 async function checkCodeExists(req, res, next) {
   try {
