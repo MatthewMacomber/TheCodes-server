@@ -34,8 +34,8 @@ timezone = 'UTC'
 
 ## Sample Data
 
-- To seed the database for development: `psql -U thecodes -d thecodes -a -f seeds/seed thecodes_tables.sql`
-- To clear seed data: `psql -U thecodes -d thecodes -a -f seeds/trunc thecodes_tables.sql`
+- To seed the database for development: `psql -U thecodes -d thecodes -a -f seeds/seed.thecodes_tables.sql`
+- To clear seed data: `psql -U thecodes -d thecodes -a -f seeds/trunc.thecodes_tables.sql`
 
 ## Scripts
 
