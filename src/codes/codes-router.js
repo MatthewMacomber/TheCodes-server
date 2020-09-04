@@ -24,6 +24,24 @@ codesRouter
       })
       .catch(next)
   })
+  .post((req, res, next) => {
+    const {the_name, the_code, the_answer} = req.body;
+    const code = {title: the_name, content: the_name, user_id: req.user.id} 
+    // add ", answer: the_answer" to object structure once database is changed to accept answers.
+    for (const [key, value] of Object.entries(code)) {
+      if (value == null) {
+        return res.status(400).json({
+          error: `Missing '${key}' in request body.`
+        })
+      }
+    }
+
+    CodeService.createCode(req.app.get('db'), code)
+      .then(code => {
+        res.json(CodeService.serializeCode(code));
+      })
+      .catch(next)
+  })
 
 codesRouter
   .route('/:code_id')
