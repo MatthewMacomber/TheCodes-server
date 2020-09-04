@@ -25,9 +25,8 @@ codesRouter
       .catch(next)
   })
   .post((req, res, next) => {
-    const {the_name, the_code, the_answer} = req.body;
-    const code = {title: the_name, content: the_name, user_id: req.user.id} 
-    // add ", answer: the_answer" to object structure once database is changed to accept answers.
+    const {code_name, the_code, the_answer} = req.body;
+    const code = {title: code_name, content: the_code, answer: the_answer, user_name: req.user.user_name} 
     for (const [key, value] of Object.entries(code)) {
       if (value == null) {
         return res.status(400).json({

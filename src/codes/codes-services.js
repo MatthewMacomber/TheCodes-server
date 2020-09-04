@@ -32,7 +32,7 @@ const CodeService = {
       title: xss(code.title),
       content: xss(code.content),
       date_created: new Date(code.date_created),
-      user_id: code.user_id
+      user_name: code.user_name
     };
   }
 };
