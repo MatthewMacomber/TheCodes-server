@@ -2,6 +2,7 @@ const express = require('express');
 const AdminService = require('./admin-service');
 const AdminAuth = require('./admin-auth');
 const AuthService = require('../auth/auth-service');
+const {requireAuth} = require('../middleware/jwt-auth');
 
 const adminRouter = express.Router();
 const parseBody = express.json();
@@ -44,6 +45,7 @@ adminRouter
 
 adminRouter
   .route('/users')
+  .all(requireAuth)
   .all(adminAuthCheck)
   .get((req, res, next) => {
     AdminService.getUserList(req.app.get('db'))
@@ -55,6 +57,7 @@ adminRouter
 
 adminRouter
   .route('/user/:user_id')
+  .all(requireAuth)
   .all(adminAuthCheck)
   .all(checkUserExists)
   .get((req, res) => {
