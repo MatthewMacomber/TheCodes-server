@@ -33,7 +33,7 @@ adminRouter
               });
             }
             const sub = dbAdmin.user_name;
-            const payload = {user_id: dbAdmin.id};
+            const payload = {user_id: dbAdmin.id, roles: 'admin'};
             res.send({
               authToken: AuthService.createJwt(sub, payload)
             });
@@ -44,7 +44,7 @@ adminRouter
 
 adminRouter
   .route('/users')
-  //.all(adminAuthCheck) //Enable when admin-auth.js is set up.
+  .all(adminAuthCheck)
   .get((req, res, next) => {
     AdminService.getUserList(req.app.get('db'))
       .then(users => {
@@ -55,11 +55,19 @@ adminRouter
 
 adminRouter
   .route('/user/:user_id')
-  //.all(adminAuthCheck) //Enable when admin-auth.js is set up.
+  .all(adminAuthCheck)
   .all(checkUserExists)
   .get((req, res) => {
     res.json(AdminService.serializeUser(res.user));
   });
+
+function adminAuthCheck(req, res, next) {
+  if (req.decoded.role !== 'admin') {
+    res.status(403).json({error: 'Permission denied'});
+  } else {
+    next();
+  }
+}
 
 async function checkUserExists(req, res, next) {
   try {
