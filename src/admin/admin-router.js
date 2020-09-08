@@ -1,8 +1,7 @@
 const express = require('express');
 const AdminService = require('./admin-service');
 const AdminAuth = require('./admin-auth');
-const AuthService = require('../auth/auth-service');
-const {requireAuth} = require('../middleware/jwt-auth');
+const {requireAuth} = require('./admin-jwt-auth');
 
 const adminRouter = express.Router();
 const parseBody = express.json();
@@ -34,9 +33,9 @@ adminRouter
               });
             }
             const sub = dbAdmin.user_name;
-            const payload = {user_id: dbAdmin.id, roles: 'admin'};
+            const payload = {user_id: dbAdmin.id, role: 'admin'};
             res.send({
-              authToken: AuthService.createJwt(sub, payload)
+              authToken: AdminAuth.createJwt(sub, payload)
             });
           });
       })
@@ -65,7 +64,7 @@ adminRouter
   });
 
 function adminAuthCheck(req, res, next) {
-  if (req.decoded.role !== 'admin') {
+  if (req.decoded.role != 'admin') {
     res.status(403).json({error: 'Permission denied'});
   } else {
     next();
