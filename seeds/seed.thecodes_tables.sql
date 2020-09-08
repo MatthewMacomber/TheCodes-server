@@ -3,6 +3,7 @@ begin;
 truncate
   thecodes_admins,
   thecodes_codes,
+  thecodes_answers,
   thecodes_users
   restart identity cascade;
 
@@ -19,5 +20,10 @@ insert into thecodes_codes (title, user_id, user_name, content, answer)
 values
   ('Super Code 1', 1, 'matt', 'jr;;p ept;f@', 'Hello World!'),
   ('Super Code 2', 2, 'bob', 'jk, no codes here lol', 'No answer cause not real code :-P');
+
+insert into thecodes_answers (content, code_id, user_id, user_name)
+values
+  ('Hello World!', 1, 1, 'matt'), -- test with correct answer
+  ('Ah,su dudes!', 1, 1, 'matt'); -- test with incorrect answer
 
 commit;

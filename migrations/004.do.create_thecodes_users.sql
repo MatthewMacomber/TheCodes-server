@@ -15,3 +15,14 @@ alter table thecodes_codes
   add column
     user_name text references thecodes_users(user_name)
     on delete set null;
+
+alter table thecodes_answers
+  add column
+    code_id integer references thecodes_codes(id)
+    on delete set null,
+  add column
+    user_id integer references thecodes_users(id)
+    on delete set null,
+  add column
+    user_name text references thecodes_users(user_name)
+    on delete set null;
