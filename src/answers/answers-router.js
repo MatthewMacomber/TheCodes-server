@@ -26,6 +26,8 @@ answersRouter
       }
     }
 
+    // TODO Add answer checking here, then add a boolean value if the answer if correct(true)/wrong(false). Also update database as needed to support this.
+
     AnswersService.createAnswer(req.app.get('db'), answer)
       .then(answer => {
         res.json(AnswersService.serializeAnswer(answer))
