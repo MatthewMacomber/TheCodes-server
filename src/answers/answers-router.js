@@ -1,8 +1,10 @@
 const express = require('express');
 const AnswersService = require('./answers-services');
+const CodeService = require('../codes/codes-services');
 const {requireAuth} = require('../middleware/jwt-auth');
 
 const answersRouter = express.Router();
+const parseBody = express.json();
 
 answersRouter
   .route('/')
@@ -15,9 +17,9 @@ answersRouter
       })
       .catch(next)
   })
-  .post((req, res, next) => {
-    const {the_answer} = req.body;
-    const answer = {content: the_answer, user_name: req.user.user_name, user_id: req.user.id};
+  .post(parseBody, (req, res, next) => {
+    const {the_answer, code_id} = req.body;
+    const answer = {content: the_answer, user_name: req.user.user_name, user_id: req.user.id, code_id: code_id};
     for (const [key, value] of Object.entries(answer)) {
       if(value == null) {
         return res.status(400).json({
@@ -27,12 +29,20 @@ answersRouter
     }
 
     // TODO Add answer checking here, then add a boolean value if the answer if correct(true)/wrong(false). Also update database as needed to support this.
+    CodeService.getById(req.app.get('db'), code_id)
+      .then(retCode => {
+        if (answer.content === retCode.answer) {
+          answer.correct = true;
+        } else {
+          answer.correct = false;
+        }
 
-    AnswersService.createAnswer(req.app.get('db'), answer)
-      .then(answer => {
-        res.json(AnswersService.serializeAnswer(answer))
+        AnswersService.createAnswer(req.app.get('db'), answer)
+          .then(answer => {
+            res.json(AnswersService.serializeAnswer(answer))
+          })
+          .catch(next)
       })
-      .catch(next)
   });
 
 answersRouter

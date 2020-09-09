@@ -3,6 +3,7 @@ const CodeService = require('./codes-services');
 const {requireAuth} = require('../middleware/jwt-auth');
 
 const codesRouter = express.Router();
+const parseBody = express.json();
 
 codesRouter
   .route('/')
@@ -24,7 +25,7 @@ codesRouter
       })
       .catch(next)
   })
-  .post((req, res, next) => {
+  .post(parseBody, (req, res, next) => {
     const {code_name, the_code, the_answer} = req.body;
     const code = {title: code_name, content: the_code, answer: the_answer, user_name: req.user.user_name} 
     for (const [key, value] of Object.entries(code)) {

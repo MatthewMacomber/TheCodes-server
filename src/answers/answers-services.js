@@ -31,6 +31,7 @@ const AnswerService = {
       id: answer.id,
       content: xss(answer.content),
       code_id: answer.code_id,
+      correct: answer.correct,
       date_created: new Date(answer.date_created),
       user_name: answer.user_name
     };
