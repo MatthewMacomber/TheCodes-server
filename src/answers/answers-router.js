@@ -21,14 +21,13 @@ answersRouter
     const {the_answer, code_id} = req.body;
     const answer = {content: the_answer, user_name: req.user.user_name, user_id: req.user.id, code_id: code_id};
     for (const [key, value] of Object.entries(answer)) {
-      if(value == null) {
+      if (value == null) {
         return res.status(400).json({
           error: `Missing '${key}' in request body.`
         })
       }
     }
 
-    // TODO Add answer checking here, then add a boolean value if the answer if correct(true)/wrong(false). Also update database as needed to support this.
     CodeService.getById(req.app.get('db'), code_id)
       .then(retCode => {
         if (answer.content === retCode.answer) {

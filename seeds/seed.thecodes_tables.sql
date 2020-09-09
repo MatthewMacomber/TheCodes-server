@@ -26,4 +26,8 @@ values
   ('Hello World!', true, 1, 1, 'matt'), -- test with correct answer
   ('Ah,su dudes!', false, 1, 1, 'matt'); -- test with incorrect answer
 
+insert into thecodes_requests (user_id, req_type, content)
+values
+  (1, 'verify', 'Please verify answer: 2');
+
 commit;

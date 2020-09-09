@@ -1,7 +1,7 @@
 const xss = require('xss');
 
 const AnswerService = {
-  getAllAnswers(db){
+  getAllAnswers(db) {
     return db
       .from('thecodes_answers')
       .select('*');

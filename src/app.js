@@ -11,6 +11,7 @@ const usersRouter = require('./users/users-router');
 const codesRouter = require('./codes/codes-router');
 const adminRouter = require('./admin/admin-router');
 const answersRouter = require('./answers/answers-router');
+const requestRouter = require('./requests/requests-router');
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use('/api/codes', codesRouter);
 app.use('/api/answers', answersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/requests', requestRouter);
 app.use('/api/admin', adminRouter);
 
 // Handle and display error messages.
