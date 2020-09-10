@@ -2,6 +2,8 @@
 
 This is the backend server for the "The Codes" web app.
 
+Live demo version of server: https://warm-harbor-99058.herokuapp.com/
+
 ## Set Up
 
 - Install dependencies: `npm install`
