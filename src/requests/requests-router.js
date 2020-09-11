@@ -8,7 +8,7 @@ const parseBody = express.json();
 requestsRouter
   .route('/')
   .all(requireAuth)
-  .get((req, res, next) => {
+  .get(adminAuthCheck, (req, res, next) => {
     // return list of all requests (admin only?)
     RequestsService.getRequests(req.app.get('db'))
       .then(requests => {
@@ -52,6 +52,14 @@ requestsRouter
       })
       .catch(next);
   });
+
+function adminAuthCheck(req, res, next) {
+  if (req.decoded.role != 'admin') {
+    res.status(403).json({error: 'Permission denied'});
+  } else {
+    next();
+  }
+}
 
 async function checkRequestExists(req, res, next) {
   try {
