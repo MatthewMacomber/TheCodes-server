@@ -9,12 +9,12 @@ requestsRouter
   .route('/')
   .all(requireAuth)
   .get(adminAuthCheck, (req, res, next) => {
-    // return list of all requests (admin only?)
+    // return list of all requests (admin only)
     RequestsService.getRequests(req.app.get('db'))
       .then(requests => {
         res.json(requests.map(RequestsService.serializeRequest));
       })
-      .catch(next)
+      .catch(next);
   })
   .post(parseBody ,(req, res, next) => {
     const {req_type, content} = req.body;
@@ -31,7 +31,7 @@ requestsRouter
       .then(request => {
         res.json(RequestsService.serializeRequest(request));
       })
-      .catch(next)
+      .catch(next);
   });
 
 requestsRouter
@@ -46,7 +46,7 @@ requestsRouter
     RequestsService.deleteRequest(req.app.get('db'), request_id)
       .then(numRowsAffected => {
         if (!numRowsAffected) {
-          res.status(404).send({error: 'Request not found'})
+          res.status(404).send({error: 'Request not found'});
         }
         res.status(204).end();
       })
@@ -68,12 +68,12 @@ async function checkRequestExists(req, res, next) {
       req.params.request_id
     )
     if (!request) {
-      return res.status(400).json({error: 'Request does not exist'})
+      return res.status(400).json({error: 'Request does not exist'});
     }
     res.request = request;
-    next()
+    next();
   } catch (error) {
-    next(error)
+    next(error);
   }
 }
 

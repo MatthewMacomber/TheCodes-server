@@ -23,16 +23,16 @@ codesRouter
       .then(codes => {
         res.json(codes.map(CodeService.serializeCode));
       })
-      .catch(next)
+      .catch(next);
   })
   .post(parseBody, (req, res, next) => {
     const {code_name, the_code, the_answer} = req.body;
-    const code = {title: code_name, content: the_code, answer: the_answer, user_name: req.user.user_name} 
+    const code = {title: code_name, content: the_code, answer: the_answer, user_name: req.user.user_name};
     for (const [key, value] of Object.entries(code)) {
       if (value == null) {
         return res.status(400).json({
           error: `Missing '${key}' in request body.`
-        })
+        });
       }
     }
 
@@ -40,7 +40,7 @@ codesRouter
       .then(code => {
         res.json(CodeService.serializeCode(code));
       })
-      .catch(next)
+      .catch(next);
   })
 
 codesRouter
@@ -60,12 +60,12 @@ async function checkCodeExists(req, res, next) {
       req.params.code_id
     )
     if (!code) {
-      return res.status(400).json({error: 'Code does not exist'})
+      return res.status(400).json({error: 'Code does not exist'});
     }
     res.code = code;
-    next()
+    next();
   } catch (error) {
-    next(error)
+    next(error);
   }
 }
 

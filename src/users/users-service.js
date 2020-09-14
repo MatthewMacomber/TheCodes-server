@@ -14,7 +14,7 @@ const UsersService = {
   insertUser(db, newUser) {
     return db
       .insert(newUser)
-      .into('thecode_users')
+      .into('thecodes_users')
       .returning('*')
       .then(([user]) => user);
   },

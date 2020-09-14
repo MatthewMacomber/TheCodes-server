@@ -78,12 +78,12 @@ async function checkUserExists(req, res, next) {
       req.params.user_id
     )
     if (!user) {
-      return res.status(400).json({error: 'User does not exist'})
+      return res.status(400).json({error: 'User does not exist'});
     }
     res.user = user;
-    next()
+    next();
   } catch (error) {
-    next(error)
+    next(error);
   }
 }
 

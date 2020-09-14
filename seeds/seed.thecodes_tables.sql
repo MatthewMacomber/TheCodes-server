@@ -4,7 +4,8 @@ truncate
   thecodes_admins,
   thecodes_codes,
   thecodes_answers,
-  thecodes_users
+  thecodes_users,
+  thecodes_requests
   restart identity cascade;
 
 insert into thecodes_admins (user_name, full_name, nickname, password)

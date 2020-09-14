@@ -4,7 +4,7 @@ create table thecodes_users (
   full_name text not null,
   password text not null,
   nickname text,
-  date_create timestamptz default now() not null,
+  date_created timestamptz default now() not null,
   date_modified timestamptz
 );
 

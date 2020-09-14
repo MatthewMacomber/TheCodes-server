@@ -25,7 +25,7 @@ answersRouter
       if (value == null) {
         return res.status(400).json({
           error: `Missing '${key}' in request body.`
-        })
+        });
       }
     }
 
@@ -39,10 +39,10 @@ answersRouter
 
         AnswersService.createAnswer(req.app.get('db'), answer)
           .then(answer => {
-            res.json(AnswersService.serializeAnswer(answer))
+            res.json(AnswersService.serializeAnswer(answer));
           })
-          .catch(next)
-      })
+          .catch(next);
+      });
   });
 
 answersRouter // Return list of all answers, for Admin use.
@@ -54,7 +54,7 @@ answersRouter // Return list of all answers, for Admin use.
       .then(answers => {
         res.json(answers.map(AnswersService.serializeAnswer));
       })
-      .catch(next)
+      .catch(next);
   });
 
 answersRouter
@@ -81,12 +81,12 @@ async function checkAnswerExists(req, res, next) {
       req.params.answer_id
     )
     if (!answer) {
-      return res.status(400).json({error: 'Answer does not exist'})
+      return res.status(400).json({error: 'Answer does not exist'});
     }
     res.answer = answer;
-    next()
+    next();
   } catch (error) {
-    next(error)
+    next(error);
   }
 }
 
