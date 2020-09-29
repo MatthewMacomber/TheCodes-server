@@ -29,6 +29,10 @@ app.use('/api/users', usersRouter);
 app.use('/api/requests', requestRouter);
 app.use('/api/admin', adminRouter);
 
+app.get('/',  (req, res) => {
+  res.send('The Codes Server.');
+});
+
 // Handle and display error messages.
 app.use(function errorHandler(error, req, res, next) {
   let response;

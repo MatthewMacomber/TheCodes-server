@@ -19,13 +19,13 @@ values
 
 insert into thecodes_codes (title, user_id, user_name, content, answer)
 values
-  ('Super Code 1', 1, 'matt', 'jr;;p ept;f@', 'Hello World!'),
+  ('Super Code 1', 1, 'demo', 'jr;;p ept;f@', 'Hello World!'),
   ('Super Code 2', 2, 'bob', 'jk, no codes here lol', 'No answer cause not real code :-P');
 
 insert into thecodes_answers (content, correct, code_id, user_id, user_name)
 values
-  ('Hello World!', true, 1, 1, 'matt'), -- test with correct answer
-  ('Ah,su dudes!', false, 1, 1, 'matt'); -- test with incorrect answer
+  ('Hello World!', true, 1, 1, 'demo'), -- test with correct answer
+  ('Ah,su dudes!', false, 1, 1, 'demo'); -- test with incorrect answer
 
 insert into thecodes_requests (user_id, req_type, content)
 values
