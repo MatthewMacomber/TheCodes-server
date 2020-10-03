@@ -48,4 +48,75 @@ timezone = 'UTC'
 
 When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
 
+## API Endpoints
+
+- `/api/codes`
+  - GET `/` Returns list of all codes. Returns array of objects.
+  - GET `/usercodes` Requires auth. Returns list of authed user codes. Returns array of objects.
+  - POST `/usercodes` Requires auth. Create a new code under authed user. Returns code object.
+  - GET `/:code_id` Requires auth. Returns requested code. Returns code Object.
+- `/api/answers`
+  - GET `/` Requires auth. Returns list of authed user answers. Returns array of objects.
+  - POST `/` Requres auth. Create a new answer under authed user. Returns answer object.
+  - GET `/list` Requires admin auth. Returns list of all answers. Returns array of objects.
+  - GET `/:answer_id` Requires auth. Returns request answer for authed user. Returns answer object.
+- `/api/auth`
+  - POST `/login` Verifies passed login credentials. Returns JWT object if successful login.
+- `/api/users`
+  - POST `/` Regisister new user after verifying passed user data. Returns new user id and user data if succesful.
+  - GET `/:user_id` Returns username of requested user_id. Returns string.
+- `/api/requests`
+  - GET `/` Requires admin auth. Returns list of all requests. Return array of objects.
+  - POST `/` Requires auth. Creates a new request. Returns request object.
+  - GET `/:request_id` Requires admin auth. Return requested request. Returns request object.
+  - DELETE `/:request_id` Requires admin auth. Deletes specified request. Returns status 204.
+- `/api/admin`
+  - POST `/` Admin specific login. Returns JWT object if successful login.
+  - GET `/users` Requires admin auth. Returns list of all users. Returns array of objects.
+  - GET `/user/:user_id` Requires admin auth. Return requested user. Returns user object.
+- `/`
+  - GET `/` Returns 'The Codes Server.'
+
+## Technology
+
+- Node.js
+- bcryptjs
+- cors
+- dotenv
+- express
+- helmet
+- jsonwebtoken
+- knex
+- morgan
+- pg
+- postgrator-cli
+- treeize
+- uuid
+- xss
+- PostgreSQL
+
+## Page Views
+
+- Home Page:
+  ![Image of Home Page](/TheCodesScreenshots/HomePage.png)
+- Login Page:
+  ![Image of Login Page](/TheCodesScreenshots/Login.png)
+- Register Page:
+  ![Image of Register Page](/TheCodesScreenshots/Register.png)
+- View Codes Page:
+  ![Image of View Codes Page](/TheCodesScreenshots/ViewCodes.png)
+- Users Codes Page:
+  ![Image of Users Codes Page](/TheCodesScreenshots/UserCodes.png)
+- A Code Page:
+  ![Image of A Code Page](/TheCodesScreenshots/ViewCode.png)
+- User Answers Page:
+  ![Image of User Answers Page](/TheCodesScreenshots/UserAnswers.png)
+- View Answer Page:
+  ![Image of View Answer Page](/TheCodesScreenshots/ViewAnswer.png)
+- User Home Page:
+  ![Image of User Home Page](/TheCodesScreenshots/UserHome.png)
+- Create Code Page:
+  ![Image of Create Code Page](/TheCodesScreenshots/CreateCode.png)
+
+
 # thecodes-server
