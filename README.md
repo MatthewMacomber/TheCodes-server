@@ -2,7 +2,10 @@
 
 This is the backend server for the "The Codes" web app.
 
-Live demo version of server: https://warm-harbor-99058.herokuapp.com/
+Live version of server: https://warm-harbor-99058.herokuapp.com/
+Live App Link: https://dsa-petful-v-matthewm.vercel.app
+Client Repo: https://github.com/thinkful-ei-quail/DSA-Petful-Client-V-MatthewM
+API Repo: https://github.com/thinkful-ei-quail/DSA-Petful-Server-V-MatthewM
 
 ## Set Up
 
