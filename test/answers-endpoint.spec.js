@@ -2,9 +2,8 @@ require('dotenv').config();
 const knex = require('knex');
 const app = require('../src/app');
 const supertest = require('supertest');
-const {makeUsersArray, makeMalUsersArray} = require('./users.fixtures');
-const {makeCodesArray, makeMalCodesArray} = require('./codes.fixtures');
-//const {makeAnswersArray, makeMalAnswersArray} = require('./answers.fixtures');
+const {makeUsersArray} = require('./users.fixtures');
+const {makeAnswersArray, makeMalAnswersArray} = require('./answers.fixtures');
 const e = require('express');
 const {expect, assert} = require('chai');
 
@@ -23,63 +22,63 @@ describe('The Codes, Answers endpoints', () => {
   before('Cleanup', () => db.raw('TRUNCATE thecodes_admins, thecodes_codes, thecodes_answers, thecodes_users, thecodes_requests RESTART IDENTITY CASCADE'));
   afterEach('Cleanup', () => db.raw('TRUNCATE thecodes_admins, thecodes_codes, thecodes_answers, thecodes_users, thecodes_requests RESTART IDENTITY CASCADE'));
 
-  describe('GET /api/codes', () => {
-    context('Given no codes in the database', () => {
+  describe('GET /api/answers', () => {
+    context('Given no answers in the database', () => {
       it('Returns with a 200 and an empty array', () => {
         return supertest(app)
-          .get('/api/codes')
+          .get('/api/answers')
           .expect(200)
           .expect([]);
       });
     });
 
-    context('Given codes in the database', () => {
+    context('Given answers in the database', () => {
       const testUsers = makeUsersArray();
-      const testCodes = makeCodesArray();
+      const testAnswers = makeAnswersArray();
 
       beforeEach('Insert users into databse', () => {
         return db('thecodes_users')
           .insert(testUsers);
       });
-      beforeEach('Insert codes into database', () => {
-        return db('thecodes_codes')
-          .insert(testCodes);
+      beforeEach('Insert answers into database', () => {
+        return db('thecodes_answers')
+          .insert(testAnswers);
       });
 
-      it('Responds with 200 and returns all codes', () => {
+      it('Responds with 200 and returns all answers', () => {
         return supertest(app)
-          .get('/api/codes')
+          .get('/api/answers')
           .expect(200)
           .expect(res => {
             for (let [i, code] of res.body.entries()) {
-              assert(code.title, testCodes[i].title);
-              assert(code.content, testCodes[i].content);
+              assert(code.code_id, testAnswers[i].code_id);
+              assert(code.content, testAnswers[i].content);
             }
           });
       });
     });
 
-    context('Given an XSS attack code', () => {
+    context('Given an XSS attack answer', () => {
       const testUsers = makeUsersArray();
-      const {maliciousCode, expectedCode} = makeMalCodesArray();
+      const {maliciousAnswers, expectedAnswers} = makeMalAnswersArray();
 
       beforeEach('Insert users into databse', () => {
         return db('thecodes_users')
           .insert(testUsers);
       });
-      beforeEach('Insert malicious code', () => {
-        return db('thecodes_codes')
-          .insert(maliciousCode);
+      beforeEach('Insert malicious answer', () => {
+        return db('thecodes_answers')
+          .insert(maliciousAnswers);
       });
 
       it('Removes XSS attack content', () => {
         return supertest(app)
-          .get('/api/codes')
+          .get('/api/answers')
           .expect(200)
           .then(res => {
-            expect(res.body[0].id).to.eql(expectedCode.id);
-            expect(res.body[0].title).to.eql(expectedCode.title);
-            expect(res.body[0].content).to.eql(expectedCode.content);
+            expect(res.body[0].id).to.eql(expectedAnswers.id);
+            expect(res.body[0].code_id).to.eql(expectedAnswers.code_id);
+            expect(res.body[0].content).to.eql(expectedAnswers.content);
           });
       });
     });

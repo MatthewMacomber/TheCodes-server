@@ -3,9 +3,13 @@
 This is the backend server for the "The Codes" web app.
 
 Live version of server: https://warm-harbor-99058.herokuapp.com/
-Live App Link: https://dsa-petful-v-matthewm.vercel.app
-Client Repo: https://github.com/thinkful-ei-quail/DSA-Petful-Client-V-MatthewM
-API Repo: https://github.com/thinkful-ei-quail/DSA-Petful-Server-V-MatthewM
+
+Live demo version of client: https://thecodes-client.vercel.app
+Registering and Login work on demo. Demo account: Username:`demo` Password:`P4ssword!`.
+
+Admin panel is accessable via: https://thecodes-client.vercel.app/admin/panel
+Admin demo account is: Username:`admin` Password:`P4ssword!`
+
 
 ## Set Up
 
@@ -97,29 +101,5 @@ When your new project is ready for deployment, add a new Heroku application with
 - uuid
 - xss
 - PostgreSQL
-
-## Page Views
-
-- Home Page:
-  ![Image of Home Page](/TheCodesScreenshots/HomePage.png)
-- Login Page:
-  ![Image of Login Page](/TheCodesScreenshots/Login.png)
-- Register Page:
-  ![Image of Register Page](/TheCodesScreenshots/Register.png)
-- View Codes Page:
-  ![Image of View Codes Page](/TheCodesScreenshots/ViewCodes.png)
-- Users Codes Page:
-  ![Image of Users Codes Page](/TheCodesScreenshots/UserCodes.png)
-- A Code Page:
-  ![Image of A Code Page](/TheCodesScreenshots/ViewCode.png)
-- User Answers Page:
-  ![Image of User Answers Page](/TheCodesScreenshots/UserAnswers.png)
-- View Answer Page:
-  ![Image of View Answer Page](/TheCodesScreenshots/ViewAnswer.png)
-- User Home Page:
-  ![Image of User Home Page](/TheCodesScreenshots/UserHome.png)
-- Create Code Page:
-  ![Image of Create Code Page](/TheCodesScreenshots/CreateCode.png)
-
 
 # thecodes-server

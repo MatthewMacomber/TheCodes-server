@@ -2,9 +2,8 @@ require('dotenv').config();
 const knex = require('knex');
 const app = require('../src/app');
 const supertest = require('supertest');
-const {makeUsersArray, makeMalUsersArray} = require('./users.fixtures');
+const {makeUsersArray} = require('./users.fixtures');
 const {makeCodesArray, makeMalCodesArray} = require('./codes.fixtures');
-//const {makeAnswersArray, makeMalAnswersArray} = require('./answers.fixtures');
 const e = require('express');
 const {expect, assert} = require('chai');
 
