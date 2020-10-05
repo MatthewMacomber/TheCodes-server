@@ -7,27 +7,27 @@ const parseBody = express.json();
 
 usersRouter
   .post('/', parseBody, (req, res, next) => {
-    const {password, user_name, full_name, nickname} = req.body;
+    const {password, user_name, full_name, nickname = ''} = req.body;
 
     for (const field of ['full_name', 'user_name', 'password']) {
       if (!req.body[field]) {
-        return res.status(400).json({error: `Missing '${field}' in request body`});
+        return res.status(401).json({error: `Missing '${field}' in request body`});
       }
     }
     
     if (user_name.startsWith(' ') || user_name.endsWith(' ')) {
-      return res.status(400).json({error: 'Username cannot start or end with spaces'});
+      return res.status(402).json({error: 'Username cannot start or end with spaces'});
     }
 
     const passwordError = UsersService.validatePassword(password);
-    if (passwordError) {
-      return res.status(400).json({error: passwordError});
+    if (passwordError !== null) {
+      return res.status(403).json({error: passwordError});
     }
 
     UsersService.hasUserWithUsername(req.app.get('db'), user_name)
       .then(hasUserWithUsername => {
         if (hasUserWithUsername) {
-          return res.status(400).json({error: 'Username already taken'});
+          return res.status(404).json({error: 'Username already taken'});
         }
         return UsersService.hashPassword(password)
           .then(hashedPassword => {
@@ -35,8 +35,7 @@ usersRouter
               user_name,
               password: hashedPassword,
               full_name,
-              nickname,
-              date_created: 'now()'
+              nickname
             };
             return UsersService.insertUser(req.app.get('db'), newUser)
               .then(user => {
