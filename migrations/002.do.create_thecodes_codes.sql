@@ -1,3 +1,5 @@
+drop table if exists thecodes_codes cascade;
+
 create table thecodes_codes (
   id serial primary key,
   title text not null,

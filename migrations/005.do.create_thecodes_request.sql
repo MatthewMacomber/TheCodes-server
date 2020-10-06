@@ -1,3 +1,5 @@
+drop table if exists thecodes_requests;
+
 create table thecodes_requests (
   id serial primary key,
   user_id integer not null,

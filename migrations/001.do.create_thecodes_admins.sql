@@ -1,3 +1,5 @@
+drop table if exists thecodes_admins cascade;
+
 create table thecodes_admins (
   id serial primary key,
   user_name text not null unique,
