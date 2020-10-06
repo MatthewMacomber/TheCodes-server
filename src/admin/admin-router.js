@@ -11,7 +11,7 @@ adminRouter
     const {user_name, password} = req.body;
     const loginAdmin = {user_name, password};
 
-    for(const [key, value] of Object.entries(loginAdmin)) {
+    for (const [key, value] of Object.entries(loginAdmin)) {
       if (value == null) {
         return res.status(400).json({
           error: `Missing '${key}' in request body`

@@ -4,12 +4,7 @@ This is the backend server for the "The Codes" web app.
 
 Live version of server: https://warm-harbor-99058.herokuapp.com/
 
-Live demo version of client: https://thecodes-client.vercel.app
-Registering and Login work on demo. Demo account: Username:`demo` Password:`P4ssword!`.
-
-Admin panel is accessable via: https://thecodes-client.vercel.app/admin/panel
-Admin demo account is: Username:`admin` Password:`P4ssword!`
-
+Client repo: https://github.com/MatthewMacomber/TheCodes-client
 
 ## Set Up
 

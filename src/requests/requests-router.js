@@ -1,14 +1,14 @@
 const express = require('express');
 const RequestsService = require('./requests-services');
 const {requireAuth} = require('../middleware/jwt-auth');
+const adminAuth = require('../admin/admin-jwt-auth').requireAuth
 
 const requestsRouter = express.Router();
 const parseBody = express.json();
 
 requestsRouter
   .route('/')
-  .all(requireAuth)
-  .get(adminAuthCheck, (req, res, next) => {
+  .get(adminAuth, adminAuthCheck, (req, res, next) => {
     // return list of all requests (admin only)
     RequestsService.getRequests(req.app.get('db'))
       .then(requests => {
@@ -16,7 +16,7 @@ requestsRouter
       })
       .catch(next);
   })
-  .post(parseBody ,(req, res, next) => {
+  .post(requireAuth, parseBody ,(req, res, next) => {
     const {req_type, content} = req.body;
     const request = {req_type: req_type, content: content, user_id: req.user.id};
     for (const [key, value] of Object.entries(request)) {
@@ -36,13 +36,19 @@ requestsRouter
 
 requestsRouter
   .route('/:request_id')
-  .all(requireAuth)
+  .all(adminAuth)
+  .all(adminAuthCheck)
   .all(checkRequestExists)
-  .get((req, res) => {
-    res.json(RequestsService.serializeRequest(res.request));
+  .get((req, res, next) => {
+    const request_id = parseInt(req.params.request_id);
+    RequestsService.getRequest(req.app.get('db'), request_id)
+      .then(request => {
+        res.json(RequestsService.serializeRequest(request));
+      })
+      .catch(next) 
   })
-  .delete((req, res) => {
-    const request_id = req.params.request_id;
+  .delete((req, res, next) => {
+    const request_id = parseInt(req.params.request_id);
     RequestsService.deleteRequest(req.app.get('db'), request_id)
       .then(numRowsAffected => {
         if (!numRowsAffected) {

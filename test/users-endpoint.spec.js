@@ -3,14 +3,9 @@ const knex = require('knex');
 const app = require('../src/app');
 const supertest = require('supertest');
 const {makeUsersArray, makeMalUsersArray} = require('./users.fixtures');
-const {makeCodesArray, makeMalCodesArray} = require('./codes.fixtures');
-//const {makeAnswersArray, makeMalAnswersArray} = require('./answers.fixtures');
-const e = require('express');
 const {expect, assert} = require('chai');
 
-// TODO Users endpoint tests.
-
-describe('The Codes endpoints', () => {
+describe('The Codes, Users endpoints', () => {
   let db;
   before('Establish knex instance', () => {
     db = knex({
@@ -23,63 +18,84 @@ describe('The Codes endpoints', () => {
   before('Cleanup', () => db.raw('TRUNCATE thecodes_admins, thecodes_codes, thecodes_answers, thecodes_users, thecodes_requests RESTART IDENTITY CASCADE'));
   afterEach('Cleanup', () => db.raw('TRUNCATE thecodes_admins, thecodes_codes, thecodes_answers, thecodes_users, thecodes_requests RESTART IDENTITY CASCADE'));
 
-  describe('GET /api/codes', () => {
-    context('Given no codes in the database', () => {
-      it('Returns with a 200 and an empty array', () => {
+  describe('POST /api/users', () => {
+    context('Given no users in the database', () => {
+      it('Given a user_id returns with a 400 and an error message', () => {
         return supertest(app)
-          .get('/api/codes')
-          .expect(200)
-          .expect([]);
-      });
-    });
-
-    context('Given codes in the database', () => {
-      const testUsers = makeUsersArray();
-      const testCodes = makeCodesArray();
-
-      beforeEach('Insert users into databse', () => {
-        return db('thecodes_users')
-          .insert(testUsers);
-      });
-      beforeEach('Insert codes into database', () => {
-        return db('thecodes_codes')
-          .insert(testCodes);
-      });
-
-      it('Responds with 200 and returns all codes', () => {
-        return supertest(app)
-          .get('/api/codes')
-          .expect(200)
+          .get('/api/users/1')
+          .expect(400)
           .expect(res => {
-            for (let [i, code] of res.body.entries()) {
-              assert(code.title, testCodes[i].title);
-              assert(code.content, testCodes[i].content);
-            }
+            assert(res.body.error === 'User not found');
           });
       });
     });
 
-    context('Given an XSS attack code', () => {
+    context('Given users in the database', () => {
       const testUsers = makeUsersArray();
-      const {maliciousCode, expectedCode} = makeMalCodesArray();
 
-      beforeEach('Insert users into databse', () => {
+      beforeEach('Insert users into database', () => {
         return db('thecodes_users')
           .insert(testUsers);
       });
-      beforeEach('Insert malicious code', () => {
-        return db('thecodes_codes')
-          .insert(maliciousCode);
+
+      it('Given an invalid user_id returns with a 400 and an error message', () => {
+        return supertest(app)
+          .get('/api/users/9')
+          .expect(400)
+          .expect(res => {
+            assert(res.body.error === 'User not found');
+          });
       });
+
+      it('Given a valid user_id returns with a 200 and a username', () => {
+        return supertest(app)
+          .get('/api/users/1')
+          .expect(200)
+          .expect(res => {
+            assert(res.body === 'demo');
+          });
+      });
+
+      it('Given new user with existing username responds with 400 and an error message', () => {
+        return supertest(app)
+          .post('/api/users')
+          .send({user_name: 'demo', full_name: 'bobby flay', password: 'P4ssword!'})
+          .expect(400)
+          .expect(res => {
+            assert(res.body.error === 'Username already taken');
+          });
+      });
+    });
+
+
+    context('Insert a new user', () => {
+      it('Given new user with new username responds with 200 and returns a username', () => {
+        return supertest(app)
+          .post('/api/users')
+          .send({user_name: 'so_good', full_name: 'bobby flay', password: 'P4ssword!'})
+          .expect(201)
+          .expect(res => {
+            const user = res.body;
+            assert(user.user_name === 'so_good');
+            assert(user.full_name === 'bobby flay');
+            assert(user.nickname === '');
+          });
+      });
+    });
+
+
+    context('Given an XSS attack user', () => {
+      const {maliciousUser, expectedUser} = makeMalUsersArray();
 
       it('Removes XSS attack content', () => {
         return supertest(app)
-          .get('/api/codes')
-          .expect(200)
+          .post('/api/users')
+          .send({user_name: maliciousUser.user_name, full_name: maliciousUser.full_name, nickname: maliciousUser.nickname, password: 'P4ssword!'})
+          .expect(201)
           .then(res => {
-            expect(res.body[0].id).to.eql(expectedCode.id);
-            expect(res.body[0].title).to.eql(expectedCode.title);
-            expect(res.body[0].content).to.eql(expectedCode.content);
+            expect(res.body.user_name).to.eql(expectedUser.user_name);
+            expect(res.body.full_name).to.eql(expectedUser.full_name);
+            expect(res.body.nickname).to.eql(expectedUser.nickname);
           });
       });
     });

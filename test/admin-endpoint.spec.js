@@ -2,15 +2,12 @@ require('dotenv').config();
 const knex = require('knex');
 const app = require('../src/app');
 const supertest = require('supertest');
-const {makeUsersArray, makeMalUsersArray} = require('./users.fixtures');
-const {makeCodesArray, makeMalCodesArray} = require('./codes.fixtures');
-//const {makeAnswersArray, makeMalAnswersArray} = require('./answers.fixtures');
-const e = require('express');
-const {expect, assert} = require('chai');
+const {makeAdminArray} = require('./admin.fixtures');
+const { verifyJwt } = require('../src/admin/admin-auth');
+const {makeUsersArray} = require('./users.fixtures');
+const {assert} = require('chai');
 
-// TODO Admin endpoint tests.
-
-describe('The Codes endpoints', () => {
+describe('The Codes, Admin endpoints (requires admin auth)', () => {
   let db;
   before('Establish knex instance', () => {
     db = knex({
@@ -23,63 +20,144 @@ describe('The Codes endpoints', () => {
   before('Cleanup', () => db.raw('TRUNCATE thecodes_admins, thecodes_codes, thecodes_answers, thecodes_users, thecodes_requests RESTART IDENTITY CASCADE'));
   afterEach('Cleanup', () => db.raw('TRUNCATE thecodes_admins, thecodes_codes, thecodes_answers, thecodes_users, thecodes_requests RESTART IDENTITY CASCADE'));
 
-  describe('GET /api/codes', () => {
-    context('Given no codes in the database', () => {
-      it('Returns with a 200 and an empty array', () => {
+  describe('GET /api/admin/login', () => {
+    context('Given no admin in the database', () => {
+      it('Returns with a 400 and an error message', () => {
         return supertest(app)
-          .get('/api/codes')
-          .expect(200)
-          .expect([]);
+          .post('/api/admin/login')
+          .send({
+            user_name: 'admin',
+            password: 'P4ssword!'
+          })
+          .expect(400)
+          .expect(res => {
+            assert(res.body.error === 'Incorrect username or password');
+          });
       });
     });
 
-    context('Given codes in the database', () => {
-      const testUsers = makeUsersArray();
-      const testCodes = makeCodesArray();
+    context('Given admin in the database', () => {
+      const testAdmin = makeAdminArray();
+      beforeEach('Insert admin into database', () => {
+        return db('thecodes_admins')
+          .insert(testAdmin);
+      });
 
-      beforeEach('Insert users into databse', () => {
+      it('Invalid admin username return with 400 and an error message', () => {
+        return supertest(app)
+          .post('/api/admin/login')
+          .send({
+            user_name: 'administrator',
+            password: 'P4ssword!'
+          })
+          .expect(400)
+          .expect(res => {
+            assert(res.body.error === 'Incorrect username or password');
+          });
+      });
+
+      it('Invalid admin password return with 400 and an error message', () => {
+        return supertest(app)
+          .post('/api/admin/login')
+          .send({
+            user_name: 'admin',
+            password: 'Password123!'
+          })
+          .expect(400)
+          .expect(res => {
+            assert(res.body.error === 'Incorrect username or password');
+          });
+      });
+
+      it('Valid admin login returns with a 200 and an admit jwt token', () => {
+        return supertest(app)
+          .post('/api/admin/login')
+          .send({
+            user_name: 'admin',
+            password: 'P4ssword!'
+          })
+          .expect(200)
+          .expect(res => {
+            assert(verifyJwt(res.body.authToken));
+          });
+      });
+    });
+
+    describe('GET /api/admin/users', () => {
+      const testAdmin = makeAdminArray();
+      const testUsers = makeUsersArray();
+      before('Insert admin into database', () => {
+        return db('thecodes_admins')
+          .insert(testAdmin);
+      });
+      let validJwt;
+      before('login a admin', () => {
+        return supertest(app)
+          .post('/api/admin/login')
+          .send({
+            user_name: 'admin',
+            password: 'P4ssword!'
+          })
+          .expect(200)
+          .expect(res => {
+            validJwt = res.body.authToken;
+          });
+      });
+      before('Insert users into database', () => {
         return db('thecodes_users')
           .insert(testUsers);
       });
-      beforeEach('Insert codes into database', () => {
-        return db('thecodes_codes')
-          .insert(testCodes);
-      });
-
-      it('Responds with 200 and returns all codes', () => {
+      it('Given valid admin token returns with a 200 and array of users', () => {
         return supertest(app)
-          .get('/api/codes')
+          .get('/api/admin/users')
+          .set('Authorization', `bearer ${validJwt}`) // Set admin jwt token
           .expect(200)
           .expect(res => {
-            for (let [i, code] of res.body.entries()) {
-              assert(code.title, testCodes[i].title);
-              assert(code.content, testCodes[i].content);
+            for (let [i, user] of res.body.entries()) {
+              assert(user.id === testUsers[i].id);
+              assert(user.full_name === testUsers[i].full_name);
+              assert(user.user_name === testUsers[i].user_name);
+              assert(user.nickname === testUsers[i].nickname);
             }
           });
       });
     });
 
-    context('Given an XSS attack code', () => {
+    describe('GET /api/admin/user', () => {
+      const testAdmin = makeAdminArray();
       const testUsers = makeUsersArray();
-      const {maliciousCode, expectedCode} = makeMalCodesArray();
-
-      beforeEach('Insert users into databse', () => {
+      before('Insert admin into database', () => {
+        return db('thecodes_admins')
+          .insert(testAdmin);
+      });
+      let validJwt;
+      before('login a admin', () => {
+        return supertest(app)
+          .post('/api/admin/login')
+          .send({
+            user_name: 'admin',
+            password: 'P4ssword!'
+          })
+          .expect(200)
+          .expect(res => {
+            validJwt = res.body.authToken;
+          });
+      });
+      before('Insert users into database', () => {
         return db('thecodes_users')
           .insert(testUsers);
       });
-      beforeEach('Insert malicious code', () => {
-        return db('thecodes_codes')
-          .insert(maliciousCode);
-      });
-
-      it('Removes XSS attack content', () => {
+      it('Given valid admin token returns with a 200 and user object', () => {
         return supertest(app)
-          .get('/api/codes')
+          .get('/api/admin/user/1')
+          .set('Authorization', `bearer ${validJwt}`) // Set admin jwt token
           .expect(200)
-          .then(res => {
-            expect(res.body[0].id).to.eql(expectedCode.id);
-            expect(res.body[0].title).to.eql(expectedCode.title);
-            expect(res.body[0].content).to.eql(expectedCode.content);
+          .expect(res => {
+            const user = res.body;
+            assert(user.id === testUsers[0].id);
+            assert(user.full_name === testUsers[0].full_name);
+            assert(user.user_name === testUsers[0].user_name);
+            assert(user.nickname === testUsers[0].nickname);
           });
       });
     });

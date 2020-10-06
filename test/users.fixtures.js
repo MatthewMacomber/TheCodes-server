@@ -19,14 +19,12 @@ function makeUsersArray() {
 
 function makeMalUsersArray() {
   const maliciousUser = {
-    id: 3,
     user_name: 'demo <script>alert("xss");</script',
     full_name: 'Matthew Macomber <script>alert("xss");</script',
     nickname: 'Demo <script>alert("xss");</script',
     password: '$2y$12$XN7iEugoKSJPFEoBQtikaOIfzZShAhWDDiGjBYAg0bgKsXuRz3zzG'
   };
   const expectedUser = {
-    id: 3,
     user_name: 'demo &lt;script&gt;alert("xss");&lt;/script',
     full_name: 'Matthew Macomber &lt;script&gt;alert("xss");&lt;/script',
     nickname: 'Demo &lt;script&gt;alert("xss");&lt;/script',

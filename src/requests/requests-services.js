@@ -31,7 +31,7 @@ const RequestsService = {
     return {
       id: request.id,
       user_id: request.user_id,
-      req_type: request.req_type,
+      req_type: xss(request.req_type),
       content: xss(request.content),
       date_created: new Date(request.date_created)
     };

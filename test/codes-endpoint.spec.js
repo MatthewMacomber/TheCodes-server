@@ -4,7 +4,6 @@ const app = require('../src/app');
 const supertest = require('supertest');
 const {makeUsersArray} = require('./users.fixtures');
 const {makeCodesArray, makeMalCodesArray} = require('./codes.fixtures');
-const e = require('express');
 const {expect, assert} = require('chai');
 
 describe('The Codes endpoints', () => {
@@ -49,8 +48,8 @@ describe('The Codes endpoints', () => {
           .expect(200)
           .expect(res => {
             for (let [i, code] of res.body.entries()) {
-              assert(code.title, testCodes[i].title);
-              assert(code.content, testCodes[i].content);
+              assert(code.title === testCodes[i].title);
+              assert(code.content === testCodes[i].content);
             }
           });
       });
