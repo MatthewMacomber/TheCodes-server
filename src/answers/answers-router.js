@@ -47,7 +47,7 @@ answersRouter
 
 answersRouter // Return list of all answers, for Admin use.
   .route('/list')
-  .all(requireAuth)
+  .all(AdminAuth)
   .all(adminAuthCheck)
   .get((req, res, next) => {
     AnswersService.getAllAnswers(req.app.get('db'))
