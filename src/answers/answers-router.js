@@ -2,7 +2,7 @@ const express = require('express');
 const AnswersService = require('./answers-services');
 const CodeService = require('../codes/codes-services');
 const {requireAuth} = require('../middleware/jwt-auth');
-const AdminAuth = require('../admin/admin-auth');
+const AdminAuth = require('../admin/admin-jwt-auth').requireAuth;
 
 const answersRouter = express.Router();
 const parseBody = express.json();
